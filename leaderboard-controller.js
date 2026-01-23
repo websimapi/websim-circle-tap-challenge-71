@@ -82,13 +82,27 @@ export class LeaderboardController {
 
     _updateItemsPerPage() {
         const containerHeight = window.innerHeight;
-        // Increased overhead estimation to safely avoid overflow
+        
+        // Explicitly set height to handle mobile browser chrome quirks
+        if (this.elements.leaderboardView) {
+            this.elements.leaderboardView.style.height = `${containerHeight}px`;
+        }
+
+        // Calculate overhead
+        // Header (Title ~40 + Filters ~40 + Margins) ~ 110px
+        // Footer (Pagination ~60)
+        // Buffer ~30
         const uiOverhead = 200; 
+        
         const availableListHeight = Math.max(0, containerHeight - uiOverhead);
-        const itemHeight = 65; // Reduced expected height due to CSS changes
+        
+        // Use a conservative item height to prevent cutoff (70px covers most wrapping cases)
+        const itemHeight = 70; 
 
         let calculatedItems = Math.floor(availableListHeight / itemHeight);
-        calculatedItems = Math.max(3, Math.min(calculatedItems, 10));
+        
+        // Clamp: Min 3 items, Max 8 items (reduced from 10 to ensure better fit on most screens)
+        calculatedItems = Math.max(3, Math.min(calculatedItems, 8));
 
         this.state.itemsPerPage = calculatedItems;
         this.detailState.itemsPerPage = calculatedItems;
