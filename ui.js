@@ -9,7 +9,27 @@ export class UIController {
     }
 
     showAbout() {
-        if(this.elements.aboutView) this.elements.aboutView.classList.remove('hidden');
+        if(this.elements.aboutView) {
+            this.elements.aboutView.classList.remove('hidden');
+            this.fitAboutContent();
+        }
+    }
+
+    fitAboutContent() {
+        const content = this.elements.aboutView.querySelector('.about-content');
+        if (!content) return;
+        
+        // Reset to measure
+        content.style.transform = '';
+        
+        const viewportHeight = window.innerHeight;
+        const contentHeight = content.scrollHeight;
+        const padding = 60; // buffer
+        
+        if (contentHeight > viewportHeight - padding) {
+            const scale = (viewportHeight - padding) / contentHeight;
+            content.style.transform = `scale(${scale})`;
+        }
     }
 
     hideAbout() {
@@ -188,6 +208,12 @@ export class UIController {
     setSubmitButtonState(state, text) {
         this.elements.submitScoreBtn.disabled = state === 'disabled';
         this.elements.submitScoreBtn.textContent = text;
+    }
+
+    handleResize() {
+        if (this.elements.aboutView && !this.elements.aboutView.classList.contains('hidden')) {
+            this.fitAboutContent();
+        }
     }
 
     updateDifficulty(difficulty) {

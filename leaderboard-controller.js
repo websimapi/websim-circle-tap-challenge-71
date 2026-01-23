@@ -82,13 +82,13 @@ export class LeaderboardController {
 
     _updateItemsPerPage() {
         const containerHeight = window.innerHeight;
-        // Approximation: H2(40) + Filters(50) + Pagination(50) + Padding(30) = ~170px overhead
-        const uiOverhead = 170;
-        const availableListHeight = containerHeight - uiOverhead;
-        const itemHeight = 72; // Entry height + gap
+        // Increased overhead estimation to safely avoid overflow
+        const uiOverhead = 200; 
+        const availableListHeight = Math.max(0, containerHeight - uiOverhead);
+        const itemHeight = 65; // Reduced expected height due to CSS changes
 
         let calculatedItems = Math.floor(availableListHeight / itemHeight);
-        calculatedItems = Math.max(3, Math.min(calculatedItems, 12));
+        calculatedItems = Math.max(3, Math.min(calculatedItems, 10));
 
         this.state.itemsPerPage = calculatedItems;
         this.detailState.itemsPerPage = calculatedItems;
@@ -179,9 +179,26 @@ export class LeaderboardController {
     }
 
     _render() {
+        // Reset scaling
+        this.elements.leaderboardList.style.transform = '';
+        this.elements.leaderboardList.style.transformOrigin = 'top center';
+        this.elements.leaderboardList.style.width = '100%';
+
         if (this.isMyScoresActive) {
             this.elements.leaderboardList.innerHTML = renderMyScores(this.userProfile);
             this.ui.hidePagination();
+            
+            // Auto-scale "My Scores" if it overflows (since it's not paginated)
+            requestAnimationFrame(() => {
+                const containerH = this.elements.leaderboardList.clientHeight;
+                const contentH = this.elements.leaderboardList.scrollHeight;
+                if (contentH > containerH && containerH > 0) {
+                     const scale = (containerH - 10) / contentH; // -10 for padding
+                     this.elements.leaderboardList.style.transform = `scale(${scale})`;
+                     // Also adjust width to prevent scaling from narrowing it visually too much
+                     this.elements.leaderboardList.style.width = `${100 / scale}%`;
+                }
+            });
             return;
         }
 

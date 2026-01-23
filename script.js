@@ -321,6 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', () => {
         game.resizeCanvas();
         updateUIScale();
+        ui.handleResize();
     });
 
     // Initial setup
