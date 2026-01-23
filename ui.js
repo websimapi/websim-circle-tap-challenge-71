@@ -21,14 +21,26 @@ export class UIController {
         
         // Reset to measure
         content.style.transform = '';
+        content.style.width = '90%';
         
-        const viewportHeight = window.innerHeight;
+        // Use visualViewport if available for accuracy
+        const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+        const viewportWidth = window.visualViewport ? window.visualViewport.width : window.innerWidth;
+        
         const contentHeight = content.scrollHeight;
-        const padding = 60; // buffer
+        const padding = 80; // Larger buffer for safe areas
         
-        if (contentHeight > viewportHeight - padding) {
-            const scale = (viewportHeight - padding) / contentHeight;
-            content.style.transform = `scale(${scale})`;
+        const availableHeight = viewportHeight - padding;
+        
+        if (contentHeight > availableHeight) {
+            const scale = availableHeight / contentHeight;
+            // Prevent becoming microscopic
+            const finalScale = Math.max(0.5, scale);
+            
+            content.style.transform = `scale(${finalScale})`;
+            // Fix width when scaled
+            // If we scale down, we can afford to be wider to compensate text wrapping? 
+            // No, that complicates things. Just scale.
         }
     }
 

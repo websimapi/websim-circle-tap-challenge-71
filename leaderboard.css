@@ -29,10 +29,11 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
-    overflow-y: hidden;
+    overflow: hidden; /* Ensure no scrollbars ever appear here, content must fit or scale */
     min-height: 0;
     padding: 2px 5px;
     justify-content: flex-start;
+    position: relative; /* For absolute positioning of scaled content if needed */
 }
 
 .pagination-container {
@@ -41,17 +42,18 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-bottom: max(15px, env(safe-area-inset-bottom));
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
     padding-top: 10px;
-    min-height: 60px;
+    min-height: 70px; /* Reserve fixed space for calculation safety */
     box-sizing: border-box;
+    z-index: 10;
 }
 
 #leaderboard-view h2 {
-    font-size: calc(1.8rem * var(--ui-scale));
+    font-size: calc(1.5rem * var(--ui-scale)); /* Slightly smaller to save vertical space */
     color: var(--accent-color);
-    margin-top: calc(5px * var(--ui-scale));
-    margin-bottom: calc(8px * var(--ui-scale));
+    margin-top: calc(10px * var(--ui-scale));
+    margin-bottom: calc(10px * var(--ui-scale));
     display: block;
     flex-shrink: 0;
 }
@@ -100,12 +102,16 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding: 15px;
+    padding: 12px 15px; /* Slightly reduced padding */
     background-color: rgba(255, 255, 255, 0.05);
     border-radius: 12px;
     cursor: pointer;
     transition: background-color 0.2s;
     border: 1px solid transparent;
+}
+
+.my-score-card.compact {
+    padding: 10px 15px;
 }
 
 .my-score-card:hover {
@@ -114,7 +120,7 @@
 }
 
 .my-score-card .diff-title {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: bold;
     color: var(--text-color);
     text-transform: capitalize;
@@ -508,8 +514,8 @@
 }
 
 .profile-avatar-large {
-    width: 70px;
-    height: 70px;
+    width: 60px;
+    height: 60px; /* Smaller avatar for compactness */
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid var(--accent-color);
@@ -522,20 +528,21 @@
     flex-direction: column;
     align-items: flex-end;
     text-align: right;
+    justify-content: center;
 }
 
 .profile-username {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     font-weight: bold;
     color: #fff;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
     word-break: break-all;
 }
 
 .profile-total-games {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: #aaa;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 }
 
 .profile-bests {
